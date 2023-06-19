@@ -77,7 +77,7 @@ const searchForGoodFlights = async (
     ).getText();
 
     const numberOfHours = Number(duration.split(' ')[0]);
-    const formattedPrice = Number(price.split(' ')[1]);
+    const formattedPrice = Number(price.split(' ')[1].replace('.', ''));
 
     if (numberOfHours < 3 && formattedPrice < 350) {
       console.log(
