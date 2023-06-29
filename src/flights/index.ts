@@ -20,27 +20,36 @@ const inputInitialInfo = async (driver: webdriver.WebDriver) => {
   );
 
   await option.click();
-  await sleep(500);
-  // escolhe salvador
+  await sleep(1000);
+  // escolhe destino
   await driver.actions().sendKeys(Key.TAB, Key.TAB, Key.TAB).perform();
 
-  await sleep(500);
-  await driver.actions().sendKeys('ssa').perform();
+  await sleep(1000);
+  await driver
+    .actions()
+    .sendKeys(process.env.FROM || 'ssa')
+    .perform();
 
-  await sleep(500);
+  await sleep(1000);
   await driver.actions().sendKeys(Key.ARROW_DOWN, Key.ENTER).perform();
 
-  await sleep(500);
+  await sleep(1000);
   await driver.actions().sendKeys(Key.TAB).perform();
 
-  await sleep(500);
-  await driver.actions().sendKeys('sao paulo').perform();
+  await sleep(1000);
+  await driver
+    .actions()
+    .sendKeys(process.env.TO || 'sao paulo')
+    .perform();
 
-  await sleep(500);
+  await sleep(1000);
   await driver.actions().sendKeys(Key.ARROW_DOWN, Key.ENTER, Key.TAB).perform();
 
-  await sleep(500);
-  await driver.actions().sendKeys('05/08/2023', Key.TAB, Key.ENTER).perform();
+  await sleep(1000);
+  await driver
+    .actions()
+    .sendKeys(process.env.INITIAL_DATE || '05/08/2023', Key.TAB, Key.ENTER)
+    .perform();
 };
 
 const searchForGoodFlights = async (
@@ -78,10 +87,14 @@ const searchForGoodFlights = async (
 
     const numberOfHours = Number(duration.split(' ')[0]);
     const formattedPrice = Number(price.split(' ')[1].replace('.', ''));
+    const month = process.env.INITIAL_DATE?.split('/')[1];
 
-    if (numberOfHours < 3 && formattedPrice < 350) {
+    if (
+      numberOfHours < Number(process.env.MAX_FLIGHT_TIME) &&
+      formattedPrice < Number(process.env.MAX_PRICE)
+    ) {
       console.log(
-        `${date}/8 ${leaveTime} - ${arrivalTime} | ${numberOfHours}h de voo | ${formattedPrice}`
+        `${date}/${month} ${leaveTime} - ${arrivalTime} | ${numberOfHours}h de voo | R$${formattedPrice}`
       );
       await soundAlarm();
     }
@@ -91,7 +104,7 @@ const searchForGoodFlights = async (
 const flights = async () => {
   const options = new Chrome.Options();
   options.windowSize({
-    width: 1550,
+    width: 1440,
     height: 1300
   });
   // options.addArguments('--disable-extensions');
@@ -105,24 +118,25 @@ const flights = async () => {
     .build();
   await driver.get('https://www.google.com/travel/flights?hl=pt-BR');
 
-  await sleep(3000);
+  await sleep(10000);
 
   try {
     await inputInitialInfo(driver);
-    await sleep(5000);
+    await sleep(10000);
     const rightArrow = await driver.findElement(
       By.xpath(
         '/html/body/c-wiz[2]/div/div[2]/c-wiz/div[1]/c-wiz/div[2]/div[1]/div/div[2]/div[2]/div/div/div[1]/div/div/div[1]/div/div[1]/div/div[3]/button'
       )
     );
 
-    await searchForGoodFlights(driver, 5);
-    await rightArrow.click();
-    await sleep(5000);
-    await searchForGoodFlights(driver, 6);
-    await rightArrow.click();
-    await sleep(5000);
-    await searchForGoodFlights(driver, 7);
+    let date = Number(process.env.INITAL_DATE?.split('/')[0]);
+    await searchForGoodFlights(driver, Number(date));
+
+    for (let i = 1; i <= Number(process.env.DAYS_ON_WINDOW); i++) {
+      await rightArrow.click();
+      await sleep(10000);
+      await searchForGoodFlights(driver, date + i);
+    }
   } catch (error) {
     console.log(error);
   }

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import flights from 'flights';
 import gol from 'gol';
 import 'reflect-metadata';

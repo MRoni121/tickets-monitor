@@ -15,8 +15,6 @@
     "@babel/cli": "^7.12.17",
     "@babel/core": "^7.12.17",
     "@babel/node": "^7.12.17",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/plugin-proposal-decorators": "^7.12.13",
     "@babel/preset-env": "^7.12.17",
     "@babel/preset-typescript": "^7.12.17",
     "@types/chromedriver": "^81.0.0",
@@ -37,7 +35,6 @@
     "chromedriver": "^114.0.2",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "pdf-parse": "^1.1.1",
     "play-sound": "^1.1.5",
     "reflect-metadata": "^0.1.13",
     "selenium-webdriver": "^4.0.0-beta.3"
